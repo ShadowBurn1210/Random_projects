@@ -123,7 +123,7 @@ def plot_graphs(elasticity_graph, quantity_demanded, average_elasticity):
 
     # Plot quantity demanded
     fig1, ax1 = plt.subplots()
-    ax1.set_xlabel('Price Change From Market Price (%)')
+    ax1.set_xlabel('Price Change From Initial Price (%)')
     ax1.set_ylabel('Quantity Demanded', color='tab:blue')
     ax1.plot(quantity_demanded.keys(), quantity_demanded.values(), color='tab:blue', label='Quantity Demanded')
     ax1.tick_params(axis='y', labelcolor='tab:blue')
@@ -144,7 +144,7 @@ def plot_graphs(elasticity_graph, quantity_demanded, average_elasticity):
 
     # Plot elasticity
     fig2, ax2 = plt.subplots()
-    ax2.set_xlabel('Price Change From Market Price (%)')
+    ax2.set_xlabel('Price Change From Initial Price (%)')
     ax2.set_ylabel('Elasticity', color='tab:red')
     ax2.set_ylim(-15, 15)
     ax2.plot(elasticity_graph.keys(), elasticity_graph.values(), color='tab:red', label='Elasticity')
