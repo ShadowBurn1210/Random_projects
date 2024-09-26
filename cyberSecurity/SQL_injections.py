@@ -1,7 +1,6 @@
 import requests
 
 
-
 def get_password():
     password = ""
 
