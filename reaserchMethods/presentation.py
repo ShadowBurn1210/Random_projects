@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the data
-all_data = pd.read_csv(r'C:\Users\Admin\PycharmProjects\RandomProjects\reaserchMethods\data.csv')
-group_data = pd.read_csv(r'C:\Users\Admin\PycharmProjects\RandomProjects\reaserchMethods\Groups.csv')
+all_data = pd.read_csv(r'./reaserchMethods/data.csv')
+group_data = pd.read_csv(r'./reaserchMethods/Groups.csv')
 
 
 # Descriptive Statistics
@@ -24,8 +24,9 @@ def descriptive_stats(groups, submission_data):
         merged_data[col] = pd.to_numeric(merged_data[col], errors='coerce')
 
     # Calculate t-test scores between groups
-    group1 = merged_data[merged_data['group_id'] == 2]
+    group1 = merged_data[merged_data['group_id'] != -16]
     group2 = merged_data[merged_data['group_id'] != 2]
+    # group1 = merged_data[merged_data['group_id']]
 
     # Extract kappa score columns (assuming they start from column 6)
     kappa_columns1 = group1.iloc[:, 5:10].apply(pd.to_numeric, errors='coerce')
@@ -66,28 +67,29 @@ def descriptive_stats(groups, submission_data):
 
 
     # Create a boxplot for the kappa scores of each group
-    sns.set(style="whitegrid", font="Arial", font_scale=1.2)
+    sns.set(style="whitegrid", font="sans-serif", font_scale=1.2)
 
     # Create a figure with two subplots
     plt.figure(figsize=(14, 6))
 
     # First subplot for Group 1
-    plt.subplot(1, 2, 1)
+    plt.subplot(1, 1, 1)
     sns.boxplot(data=group1[['text1_kappa', 'text2_kappa', 'text3_kappa', 'text4_kappa', 'text5_kappa']],
                 color='skyblue')
-    plt.title('Group 1 Kappa Scores', fontsize=14, loc='left')  # APA style: left-aligned title
+    # plt.title('Group 1 Kappa Scores', fontsize=14, loc='left')  # APA style: left-aligned title
     plt.xlabel('Texts', fontsize=12)
+    sns.despine()
     plt.ylabel('Kappa Score', fontsize=12)
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
 
     # Second subplot for Group 2
-    plt.subplot(1, 2, 2)
-    sns.boxplot(data=group2[['text1_kappa', 'text2_kappa', 'text3_kappa', 'text4_kappa', 'text5_kappa']],
-                color='skyblue')
-    plt.title('Group 2 Kappa Scores', fontsize=14, loc='left')  # APA style: left-aligned title
-    plt.xlabel('Texts', fontsize=12)
-    plt.ylabel('Kappa Score', fontsize=12)
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    # plt.subplot(1, 2, 2)
+    # sns.boxplot(data=group2[['text1_kappa', 'text2_kappa', 'text3_kappa', 'text4_kappa', 'text5_kappa']],
+    #             color='skyblue')
+    # plt.title('Group 2 Kappa Scores', fontsize=14, loc='left')  # APA style: left-aligned title
+    # plt.xlabel('Texts', fontsize=12)
+    # plt.ylabel('Kappa Score', fontsize=12)
+    # plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
 
     # Adjust layout to prevent overlap
     plt.tight_layout()
@@ -133,13 +135,41 @@ def correlation(data):
         print()
 
         # Create a regression plot to show the correlation between AI text amount and kappa score
+        # plt.figure(figsize=(10, 6))
+        # sns.regplot(x=ai_values, y=kappa_values, scatter_kws={'alpha': 0}, line_kws={'color': 'red'})
+        # for x in np.unique(ai_values):
+        #     kappa_values_for_x = [kappa_values[i] for i in range(len(ai_values)) if ai_values[i] == x]
+        #     plt.scatter([x], [np.mean(kappa_values_for_x)], color='black', s=50)        
+        # # set x step 1.0
+        # plt.xticks(np.arange(min(ai_values), max(ai_values)+1, 1.0))
+        # # plt.title('Kappa Score vs AI Text Amount', fontsize=16)
+        # plt.xlabel('AI Sentence Count', fontsize=14)
+        # plt.ylabel('Kappa Score', fontsize=14)
+        # plt.grid(False)
+        # plt.grid(which='major', axis='y', linewidth=0.5)
+        # sns.despine()
+        # plt.show()
+
+        # Create a boxplot to visualize the distribution of kappa scores across AI categories
+        # Convert ai_values into categorical bins for better visualization
+        # ai_categories = pd.cut(ai_values, bins=3, labels=['Low', 'Medium', 'High'])
+        category_data = pd.DataFrame({'AI Sentence Count': ai_values, 'Kappa Score': kappa_values})
+
         plt.figure(figsize=(10, 6))
-        sns.regplot(x=ai_values, y=kappa_values, scatter_kws={'alpha': 0.5}, line_kws={'color': 'red'})
-        plt.title('Kappa Score vs AI Text Amount', fontsize=16)
-        plt.xlabel('Kappa Score', fontsize=14)
-        plt.ylabel('AI Text Amount', fontsize=14)
-        plt.grid(which='both', axis='both', linewidth=0.5)
+        # sns.boxplot(x='AI Sentence Count', y='Kappa Score', data=category_data, color='skyblue')
+        sns.boxplot(
+            x='AI Sentence Count', 
+            y='Kappa Score', 
+            data=category_data, 
+            color='skyblue',
+            medianprops={'color': 'black', 'linewidth': 2}  # Set median to red and 5px thick
+        )
+
+        plt.xlabel('AI Sentence Count', fontsize=14)
+        plt.ylabel('Kappa Score', fontsize=14)
+        sns.despine()
         plt.show()
+
 
 
         # Group AI text amounts into categories for ANOVA and Kruskal-Wallis
@@ -189,6 +219,6 @@ def correlation(data):
 if __name__ == "__main__":
     # Drop the 'submission_id' column as it's not needed for analysis
     data = all_data.drop(columns=['submission_id'])
-    descriptive_stats(group_data, all_data)
+    # descriptive_stats(group_data, all_data)
     results = correlation(data)
     pprint.pprint(results)
